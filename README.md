@@ -1,9 +1,9 @@
 <div align="center">
     <img src="logo.png" alt="OpenMover logo" width="128">
     
-    # Actinium
+# Actinium
 
-    **⚠️ Actinium is currently in development.**
+**⚠️ Actinium is currently in development.**
 
 [![Release](https://img.shields.io/github/v/release/SyrupStudio/Actinium?include_prereleases)](https://github.com/SyrupStudio/Actinium/releases)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
