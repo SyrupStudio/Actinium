@@ -1,0 +1,159 @@
+name: Release Actinium
+
+on:
+  workflow_dispatch:
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read version.txt
+        id: read
+        run: |
+          VERSION=$(cat version.txt | tr -d '[:space:]')
+          if [ -z "$VERSION" ]; then
+            echo "version.txt is empty" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building version: $VERSION"
+
+  windows:
+    needs: version
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.*'
+
+      - name: Install NSIS
+        run: choco install nsis -y
+
+      - name: Configure
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DPROJECT_VERSION=${{ needs.version.outputs.version }}
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Deploy Qt runtime
+        run: windeployqt --release build/Actinium.exe
+
+      - name: Package (NSIS installer + ZIP)
+        working-directory: build
+        run: cpack -C Release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: actinium-windows
+          path: |
+            build/*.exe
+            build/*.zip
+
+  linux:
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.*'
+
+      - name: Install packaging tools
+        run: sudo apt-get update && sudo apt-get install -y rpm ninja-build
+
+      - name: Configure
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DPROJECT_VERSION=${{ needs.version.outputs.version }}
+      - name: Build
+        run: cmake --build build
+
+      - name: Package (TGZ + DEB + RPM)
+        working-directory: build
+        run: cpack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: actinium-linux
+          path: |
+            build/*.tar.gz
+            build/*.deb
+            build/*.rpm
+
+  macos:
+    needs: version
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.*'
+
+      - name: Configure
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DPROJECT_VERSION=${{ needs.version.outputs.version }}
+      - name: Build
+        run: cmake --build build
+
+      - name: Deploy Qt runtime into .app bundle
+        run: macdeployqt build/Actinium.app
+
+      - name: Package (DragNDrop .dmg)
+        working-directory: build
+        run: cpack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: actinium-macos
+          path: |
+            build/*.dmg
+
+  publish:
+    needs: [version, windows, linux, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Flatten artifact layout
+        run: |
+          mkdir -p release
+          find artifacts -type f \( \
+            -name '*.exe' -o -name '*.zip' -o -name '*.tar.gz' \
+            -o -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' \
+          \) -exec cp {} release/ \;
+          ls -la release
+
+      - name: Build changelog since last release
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            echo "## Commits" > CHANGELOG.md
+            git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          else
+            echo "## Commits since $PREV_TAG" > CHANGELOG.md
+            git log "$PREV_TAG"..HEAD --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          fi
+          cat CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.version.outputs.version }}
+          name: Actinium v${{ needs.version.outputs.version }}
+          files: release/*
+          body_path: CHANGELOG.md
