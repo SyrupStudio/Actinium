@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="logo.png" alt="OpenMover logo" width="128">
+<img src="logo.png" alt="OpenMover logo" width="128">
     
 # Actinium
 

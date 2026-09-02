@@ -14,7 +14,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(Actinium main.cpp)
+add_executable(Actinium main.cpp resources.qrc)
 
 target_link_libraries(Actinium
         Qt::Core
