@@ -30,7 +30,8 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.*'
+          version: '6.7.3'
+          arch: 'win64_msvc2022_64'
 
       - name: Install NSIS
         run: choco install nsis -y
@@ -87,14 +88,14 @@ jobs:
 
   macos:
     needs: version
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.*'
+          version: '6.7.3'
 
       - name: Configure
         run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DPROJECT_VERSION=${{ needs.version.outputs.version }}

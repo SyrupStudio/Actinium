@@ -1,4 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
+
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Vcpkg toolchain file")
+endif()
+
 project(Actinium VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)

@@ -15,7 +15,8 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.*'
+          version: '6.7.3'
+          arch: 'win64_msvc2022_64'
           modules: ''
 
       - name: Install NSIS
@@ -72,7 +73,7 @@ jobs:
             build/*.rpm
 
   macos:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
 
