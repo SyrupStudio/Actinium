@@ -2,6 +2,8 @@
   "name": "Actinium",
   "version-string": "0.1.0",
   "dependencies": [
-    "luajit"
+    "luajit",
+    "bgfx",
+    "glfw3"
   ]
 }

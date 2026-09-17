@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     app.setApplicationName("Actinium");
     app.setApplicationDisplayName("Actinium");
 
-    QIcon appIcon("logo.png");
+    QIcon appIcon("assets/logo.png");
     if (!appIcon.isNull()) {
         app.setWindowIcon(appIcon);
     }
