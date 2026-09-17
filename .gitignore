@@ -69,5 +69,4 @@ Testing/
 .cache/
 
 # IDE specific files
-.vscode/
 .idea/

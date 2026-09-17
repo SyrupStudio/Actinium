@@ -1,0 +1,18 @@
+{
+  "cmake.configureOnOpen": true,
+  "cmake.generator": "Ninja",
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.configureArgs": [
+    "-DCMAKE_BUILD_TYPE=Release"
+  ],
+  "cmake.environment": {
+    "VCPKG_ROOT": "${workspaceFolder}/vcpkg"
+  },
+  "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+  "files.associations": {
+    "*.tpp": "cpp",
+    "*.hpp": "cpp"
+  },
+  "terminal.integrated.defaultProfile.linux": "zsh"
+}

@@ -1,7 +1,8 @@
-# include <QApplication>
-#include <QMainWindow>
-#include <QLabel>
+#include <QApplication>
+#include <QFont>
 #include <QIcon>
+#include <QLabel>
+#include <QMainWindow>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -13,10 +14,7 @@ int main(int argc, char *argv[]) {
     app.setApplicationName("Actinium");
     app.setApplicationDisplayName("Actinium");
 
-    QIcon appIcon(":/logo.png");
-    if (appIcon.isNull()) {
-        appIcon = QIcon(":/logo.png");
-    }
+    QIcon appIcon("logo.png");
     if (!appIcon.isNull()) {
         app.setWindowIcon(appIcon);
     }
