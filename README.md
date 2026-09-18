@@ -1,4 +1,5 @@
 <div align="center">
+
 <img src="assets/logo.png" alt="Actinium logo" width="128">
     
 # Actinium
@@ -12,6 +13,7 @@
 [![C++](https://img.shields.io/badge/C%2B%2B-20-blue.svg)](https://en.cppreference.com/w/cpp/20)
 [![Qt](https://img.shields.io/badge/Qt-6-41CD52.svg?logo=qt)](https://www.qt.io/)
 [![Platforms](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey)](#compiling)
+
 </div>
 
 **This readme is currently incomplete**
@@ -71,19 +73,19 @@ $env:VCPKG_ROOT = (Get-Location).Path
 
 ```bash
     sudo apt update
-    sudo apt install -y build-essential cmake ninja-build qt6-base-dev
+    sudo apt install -y build-essential cmake ninja-build qt6-base-dev libfuse2 patchelf desktop-file-utils wget
 ```
 
 ### Linux (Fedora, RHEL based distros)
 
 ```bash
-    sudo dnf install -y gcc-c++ cmake ninja-build qt6-qtbase-devel
+    sudo dnf install -y gcc-c++ cmake ninja-build qt6-qtbase-devel fuse-libs patchelf desktop-file-utils wget
 ```
 
 ### Linux (Arch based distros)
 
 ```bash
-    sudo pacman -S --needed base-devel cmake ninja qt6-base
+    sudo pacman -S --needed base-devel cmake ninja qt6-base fuse2 patchelf desktop-file-utils wget
 ```
 
 Once you have downloaded the dependencies to build

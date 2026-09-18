@@ -17,6 +17,18 @@
       }
     },
     {
+      "name": "windows-release",
+      "displayName": "Windows Release Build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows-release",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      }
+    },
+    {
       "name": "debug",
       "displayName": "Debug Build",
       "generator": "Ninja",
@@ -65,6 +77,10 @@
     {
       "name": "macos-debug",
       "configurePreset": "macos-debug"
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release"
     }
   ],
   "testPresets": [

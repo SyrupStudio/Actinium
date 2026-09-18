@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Syrup Studios
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include <QApplication>
 #include <QFont>
 #include <QIcon>
@@ -5,11 +8,14 @@
 #include <QMainWindow>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QMenuBar>
+#include <iostream>
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     QApplication::setStyle("Fusion");
+    std::cout << "Style set" << std::endl;
 
     app.setApplicationName("Actinium");
     app.setApplicationDisplayName("Actinium");
@@ -29,6 +35,7 @@ int main(int argc, char *argv[]) {
     auto *central = new QWidget(&window);
     auto *layout = new QVBoxLayout(central);
     auto *label = new QLabel("Hello World!");
+    std::cout << "Actinium is running." << std::endl;
     label->setAlignment(Qt::AlignCenter);
 
     QFont font = label->font();

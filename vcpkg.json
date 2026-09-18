@@ -1,9 +1,9 @@
 {
-  "name": "Actinium",
+  "name": "actinium",
   "version-string": "0.1.0",
   "dependencies": [
-    "luajit",
     "bgfx",
-    "glfw3"
+    "glfw3",
+    "luajit"
   ]
 }
