@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "Actinium"
-version = "0.0.1-developmentBuild"
+version = "0.0.1-dev.1"
 dependencies = [
  "discord-rich-presence",
  "egui",
