@@ -22,6 +22,8 @@ jobs:
   windows-msi:
     needs: get-version
     runs-on: windows-latest
+    env:
+      CXXFLAGS: /wd4865
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -51,6 +53,8 @@ jobs:
   windows-portable:
     needs: get-version
     runs-on: windows-latest
+    env:
+      CXXFLAGS: /wd4865
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
