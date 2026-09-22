@@ -1,0 +1,36 @@
+app-id: lol.syrupstudios.Actinium
+runtime: org.freedesktop.Platform
+runtime-version: "23.08"
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+command: Actinium
+
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --device=dri
+  # Add more as your engine needs them, e.g.:
+  # - --filesystem=home        (if games save files to the user's home dir)
+  # - --device=all             (if gamepad/joystick access needs broader device perms)
+
+modules:
+  - name: actinium
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin
+      env:
+        CARGO_HOME: /run/build/actinium/cargo
+    build-commands:
+      - cargo --offline build --release || cargo build --release
+      - install -Dm755 target/release/Actinium /app/bin/Actinium
+      - install -Dm644 assets/actinium.desktop /app/share/applications/lol.syrupstudios.Actinium.desktop
+      - install -Dm644 assets/logo128.png /app/share/icons/hicolor/128x128/apps/lol.syrupstudios.Actinium.png
+      - install -Dm644 assets/logo256.png /app/share/icons/hicolor/256x256/apps/lol.syrupstudios.Actinium.png
+      # If you have an AppStream metainfo file (needed later for Flathub):
+      # - install -Dm644 lol.syrupstudios.Actinium.metainfo.xml /app/share/metainfo/lol.syrupstudios.Actinium.metainfo.xml
+    sources:
+      - type: dir
+        path: .

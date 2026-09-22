@@ -43,3 +43,6 @@ Session.vim
 .netrwhist
 tags
 *.un~
+
+# Flatpak stuff
+.flatpak-builder
