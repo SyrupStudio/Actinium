@@ -1,0 +1,68 @@
+[package]
+name = "Actinium"
+version = "0.1.0"
+license = "MPL-2.0"
+description = "Actinium is a game engine written in Rust, designed for creating 2D and 3D games with ease. It provides a robust framework for game development, including rendering, physics, input handling, and more."
+documentation = "https://docs.syrupstudios.lol"
+authors = [
+  "Syrup Studios",
+  "Pancakse <me@pancakse.dev>"
+]
+edition = "2024"
+
+[package.metadata.wix]
+eula = "eula.rtf"
+help-url = "https://docs.syrupstudios.lol"
+
+[package.metadata.bundle]
+name = "Actinium"
+identifier = "dev.syrupstudios.actinium"
+icon = ["assets/icon.icns"]
+copyright = "Copyright (c) 2026 Syrup Studios"
+category = "public.app-category.developer-tools"
+short_description = "A game engine for 2D and 3D games"
+
+[package.metadata.deb]
+maintainer = "Pancakse <me@pancakse.dev>"
+copyright = "2026, Syrup Studios"
+license-file = ["LICENSE", "0"]
+extended-description = "A game engine for 2D and 3D games."
+depends = "$auto"
+section = "games"
+priority = "optional"
+assets = [
+  ["target/release/Actinium", "usr/bin/", "755"],
+  ["assets/actinium.desktop", "usr/share/applications/", "644"],
+  ["assets/logo16.png", "usr/share/icons/hicolor/16x16/apps/actinium.png", "644"],
+  ["assets/logo32.png", "usr/share/icons/hicolor/32x32/apps/actinium.png", "644"],
+  ["assets/logo128.png", "usr/share/icons/hicolor/128x128/apps/actinium.png", "644"],
+  ["assets/logo256.png", "usr/share/icons/hicolor/256x256/apps/actinium.png", "644"],
+  ["assets/logo512.png", "usr/share/icons/hicolor/512x512/apps/actinium.png", "644"],
+]
+
+[package.metadata.generate-rpm]
+assets = [
+  { source = "target/release/Actinium", dest = "/usr/bin/Actinium", mode = "755" },
+  { source = "assets/actinium.desktop", dest = "/usr/share/applications/actinium.desktop", mode = "644" },
+  { source = "assets/logo16.png", dest = "/usr/share/icons/hicolor/16x16/apps/actinium.png", mode = "644" },
+  { source = "assets/logo32.png", dest = "/usr/share/icons/hicolor/32x32/apps/actinium.png", mode = "644" },
+  { source = "assets/logo128.png", dest = "/usr/share/icons/hicolor/128x128/apps/actinium.png", mode = "644" },
+  { source = "assets/logo256.png", dest = "/usr/share/icons/hicolor/256x256/apps/actinium.png", mode = "644" },
+  { source = "assets/logo512.png", dest = "/usr/share/icons/hicolor/512x512/apps/actinium.png", mode = "644" },
+]
+
+[dependencies]
+discord-rich-presence = "1.1.0"
+egui = "0.36.2"
+egui-wgpu = "0.36.2"
+egui-winit = "0.36.2"
+gilrs = "0.11.2"
+hecs = "0.11.1"
+image = "0.25.10"
+mlua = { version = "0.12.1", features = ["luajit", "vendored", "async", "send"] }
+pollster = "1.0.1"
+rolt = "0.3.1"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+wgpu = "30.0.1"
+winit = "0.30.13"
