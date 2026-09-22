@@ -8,29 +8,40 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
-[*.{h,hpp,hxx,c,cpp,cxx,cc}]
-indent_style = space
+# Rust — rustfmt defaults to 4 spaces, keep this in sync
+[*.rs]
 indent_size = 4
+max_line_length = 100
 
-[CMakeLists.txt]
-indent_style = space
-indent_size = 4
-
-[*.cmake]
-indent_style = space
-indent_size = 4
-
-[*.{json,jsonc}]
-indent_style = space
+# Lua
+[*.lua]
 indent_size = 2
 
+# Go — gofmt uses tabs, don't fight it
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# TOML (Cargo.toml, config files)
+[*.toml]
+indent_size = 2
+
+# YAML (CI configs, etc.)
 [*.{yml,yaml}]
-indent_style = space
 indent_size = 2
 
+# Markdown — trailing whitespace can be meaningful (line breaks), don't trim
 [*.md]
 trim_trailing_whitespace = false
+
+# WiX installer XML
+[*.{xml,wxs}]
 indent_size = 2
 
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# Makefiles require literal tabs — never override this
 [Makefile]
 indent_style = tab

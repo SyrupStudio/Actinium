@@ -1,26 +1,15 @@
-name: Release
+name: Build
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 env:
   APP_NAME: Actinium
 
 jobs:
-  get-version:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: get
-        run: |
-          VERSION=$(grep -m1 '^version' Cargo.toml | sed -E 's/version *= *"(.*)"/\1/')
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Detected version: $VERSION"
-
   windows-msi:
-    needs: get-version
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,11 +34,10 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-windows-msi
+          name: ${{ env.APP_NAME }}-windows-msi
           path: target/wix/*.msi
 
   windows-portable:
-    needs: get-version
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,15 +52,14 @@ jobs:
           mkdir portable
           copy target\release\${{ env.APP_NAME }}.exe portable\
           if (Test-Path assets) { Copy-Item -Recurse assets portable\assets }
-          Compress-Archive -Path portable\* -DestinationPath ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-windows-portable.zip
+          Compress-Archive -Path portable\* -DestinationPath ${{ env.APP_NAME }}-windows-portable.zip
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-windows-portable
-          path: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-windows-portable.zip
+          name: ${{ env.APP_NAME }}-windows-portable
+          path: ${{ env.APP_NAME }}-windows-portable.zip
 
   macos-app:
-    needs: get-version
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -92,15 +79,14 @@ jobs:
       - name: Zip the .app
         run: |
           cd target/release/bundle/osx
-          zip -r ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos.zip "${{ env.APP_NAME }}.app"
+          zip -r ${{ env.APP_NAME }}-macos.zip "${{ env.APP_NAME }}.app"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos
-          path: target/release/bundle/osx/${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos.zip
+          name: ${{ env.APP_NAME }}-macos
+          path: target/release/bundle/osx/${{ env.APP_NAME }}-macos.zip
 
   linux-tarball:
-    needs: get-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -138,19 +124,19 @@ jobs:
           mkdir -p package/${{ env.APP_NAME }}
           cp target/release/${{ env.APP_NAME }} package/${{ env.APP_NAME }}/
           if [ -d assets ]; then cp -r assets package/${{ env.APP_NAME }}/; fi
-          tar -czf ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-linux.tar.gz -C package ${{ env.APP_NAME }}
+          tar -czf ${{ env.APP_NAME }}-linux.tar.gz -C package ${{ env.APP_NAME }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-linux
-          path: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-linux.tar.gz
+          name: ${{ env.APP_NAME }}-linux
+          path: ${{ env.APP_NAME }}-linux.tar.gz
 
       - name: Build .deb
         run: cargo deb
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-deb
+          name: ${{ env.APP_NAME }}-deb
           path: target/debian/*.deb
 
       - name: Strip binary for rpm (cargo-generate-rpm requires this)
@@ -161,38 +147,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-rpm
+          name: ${{ env.APP_NAME }}-rpm
           path: target/generate-rpm/*.rpm
-
-  release:
-    needs:
-      - get-version
-      - windows-msi
-      - windows-portable
-      - macos-app
-      - linux-tarball
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create and push tag
-        run: |
-          VERSION="${{ needs.get-version.outputs.version }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Publish release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ needs.get-version.outputs.version }}
-          name: v${{ needs.get-version.outputs.version }}
-          files: artifacts/**/*

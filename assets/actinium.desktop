@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Actinium
+Comment=Actinium is a game engine written in Rust, designed for creating 2D and 3D games with ease. It provides a robust framework for game development, including rendering, physics, input handling, and more.
+Exec=/usr/bin/Actinium
+Icon=actinium
+Terminal=false
+Categories=Development;Game;
