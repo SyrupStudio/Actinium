@@ -1,6 +1,6 @@
 [package]
 name = "Actinium"
-version = "0.1.0"
+version = "0.0.1-developmentBuild"
 license = "MPL-2.0"
 description = "Actinium is a game engine written in Rust, designed for creating 2D and 3D games with ease. It provides a robust framework for game development, including rendering, physics, input handling, and more."
 documentation = "https://docs.syrupstudios.lol"
