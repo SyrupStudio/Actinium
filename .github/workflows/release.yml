@@ -140,7 +140,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}-macos-dmg
+          name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos-dmg
           path: target/release/bundle/osx/${{ env.APP_NAME }}-macos.dmg
 
   linux-tarball:
