@@ -10,6 +10,7 @@ env:
 
 jobs:
   windows-msi:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '--ciSkip')
     runs-on: windows-latest
     env:
       CXXFLAGS: /wd4865
@@ -40,6 +41,7 @@ jobs:
           path: target/wix/*.msi
 
   windows-portable:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '--ciSkip')
     runs-on: windows-latest
     env:
       CXXFLAGS: /wd4865
@@ -64,6 +66,7 @@ jobs:
           path: ${{ env.APP_NAME }}-windows-portable.zip
 
   macos-app:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '--ciSkip')
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -132,6 +135,7 @@ jobs:
           path: target/release/bundle/osx/${{ env.APP_NAME }}-macos.dmg
 
   linux-tarball:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '--ciSkip')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
