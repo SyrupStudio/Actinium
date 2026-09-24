@@ -1,4 +1,5 @@
 use std::sync::Arc;
+
 mod utils;
 
 use winit::{
@@ -9,6 +10,8 @@ use winit::{
 };
 
 use utils::discord::Presence;
+
+const APP_NAME: &str = "Actinium Game Engine";
 
 fn load_icon(path: &str) -> Icon {
     let image = image::open(path)
@@ -32,6 +35,8 @@ struct GpuState {
 struct App {
     window: Option<Arc<Window>>,
     gpu: Option<GpuState>,
+    menu_bar: crate::utils::menu_bar::MenuBarState,
+    update_banner: crate::utils::update_banner::UpdateBanner,
 }
 
 impl App {
@@ -39,6 +44,8 @@ impl App {
         Self {
             window: None,
             gpu: None,
+            menu_bar: crate::utils::menu_bar::MenuBarState::new(),
+            update_banner: crate::utils::update_banner::UpdateBanner::new(),
         }
     }
 }
@@ -52,7 +59,7 @@ impl ApplicationHandler for App {
         let icon = load_icon("assets/logo128.png");
 
         let window_attributes = Window::default_attributes()
-            .with_title("Actinium Game Engine")
+            .with_title(APP_NAME)
             .with_inner_size(winit::dpi::LogicalSize::new(1280.0, 720.0))
             .with_window_icon(Some(icon));
 
@@ -156,7 +163,8 @@ impl ApplicationHandler for App {
                 let raw_input = gpu.egui_state.take_egui_input(window);
 
                 let mut full_output = gpu.egui_ctx.run_ui(raw_input, |ui| {
-                    // Intentionally empty — a blank central panel, nothing drawn.
+                    self.menu_bar.show(ui);
+                    self.update_banner.show(ui);
                     egui::CentralPanel::default().show(ui, |_ui| {});
                 });
 
@@ -258,7 +266,16 @@ impl ApplicationHandler for App {
         }
     }
 }
+
 fn main() {
+
+    match crate::utils::os_check::check_os_supported() {
+        crate::utils::os_check::OsCheckResult::Unsupported { detected, message } => {
+            crate::utils::os_check::block_and_exit(&detected, &message);
+        }
+        crate::utils::os_check::OsCheckResult::Supported => {}
+    }
+
     let presence = Presence::start("1551696179983818914");
 
     let event_loop = EventLoop::new().expect("failed to create event loop");
@@ -269,5 +286,5 @@ fn main() {
     let mut app = App::new();
     event_loop.run_app(&mut app).expect("event loop error");
 
-    println!("Hello, world!");
+    println!("Wsg guys");
 }
