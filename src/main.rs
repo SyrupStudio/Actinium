@@ -13,9 +13,9 @@ use utils::discord::Presence;
 
 const APP_NAME: &str = "Actinium Game Engine";
 
-fn load_icon(path: &str) -> Icon {
-    let image = image::open(path)
-        .expect("failed to open icon file")
+fn load_icon() -> Icon {
+    let image = image::load_from_memory(include_bytes!("../assets/logo128.png"))
+        .expect("failed to load embedded icon")
         .into_rgba8();
     let (width, height) = image.dimensions();
     let rgba = image.into_raw();
@@ -56,7 +56,7 @@ impl ApplicationHandler for App {
             return; // already set up (e.g. resumed after being suspended)
         }
 
-        let icon = load_icon("assets/logo128.png");
+        let icon = load_icon();
 
         let window_attributes = Window::default_attributes()
             .with_title(APP_NAME)

@@ -103,11 +103,11 @@ impl MenuBarState {
 
                 ui.menu_button("Help", |ui| {
                     if ui.button("Documentation").clicked() {
-                        let _ = open::that("https://docs.syrupstudios.lol");
+                        let _ = open::that("https://docs.syrupstudios.lol/Actinium/gettingStarted.html");
                         ui.close_menu();
                     }
                     if ui.button("Report an Issue").clicked() {
-                        let _ = open::that("https://github.com/ItzPancakse/Actinium/issues");
+                        let _ = open::that("https://github.com/SyrupStudio/Actinium/issues");
                         ui.close_menu();
                     }
                     ui.separator();
@@ -126,7 +126,9 @@ impl MenuBarState {
                 .show(ui.ctx(), |ui| {
                     ui.label("Actinium Game Engine");
                     ui.label(format!("Version {}", env!("CARGO_PKG_VERSION")));
-                    ui.label("A game engine by Syrup Studios");
+                    ui.horizontal(|ui| {
+                        ui.label("Developed with love by Syrup Studios.");
+                    });
                     ui.separator();
                     if ui.button("Close").clicked() {
                         self.show_about = false;

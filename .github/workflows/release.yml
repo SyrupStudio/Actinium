@@ -220,6 +220,18 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate release notes
+        shell: bash
+        run: |
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          if [ -n "$PREVIOUS_TAG" ]; then
+            git log --format='%h: %s' "$PREVIOUS_TAG..HEAD" > release-notes.md
+          else
+            git log --format='%h: %s' > release-notes.md
+          fi
 
       - name: Create and push tag
         run: |
@@ -239,4 +251,5 @@ jobs:
         with:
           tag_name: v${{ needs.get-version.outputs.version }}
           name: v${{ needs.get-version.outputs.version }}
+          body_path: release-notes.md
           files: artifacts/**/*
