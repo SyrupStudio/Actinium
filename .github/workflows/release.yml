@@ -134,14 +134,14 @@ jobs:
             --icon-size 100 \
             --icon "${{ env.APP_NAME }}.app" 150 200 \
             --app-drop-link 450 200 \
-            "${{ env.APP_NAME }}-macos.dmg" \
+            "${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos.dmg" \
             "${{ env.APP_NAME }}.app" || true
-          test -f "${{ env.APP_NAME }}-macos.dmg"
+          test -f "${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos.dmg"
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos-dmg
-          path: target/release/bundle/osx/${{ env.APP_NAME }}-macos.dmg
+          path: target/release/bundle/osx/${{ env.APP_NAME }}-${{ needs.get-version.outputs.version }}-macos.dmg
 
   linux-tarball:
     needs: get-version
