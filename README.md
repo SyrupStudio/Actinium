@@ -2,6 +2,8 @@
 
 <img src="assets/logo.png" alt="Actinium logo" width="128">
 
+Logo credits to @AveryDoesMagic
+
 # Actinium
 
 **⚠️ Actinium is currently in development.**
