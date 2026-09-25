@@ -1,3 +1,7 @@
+use std::sync::mpsc::Receiver;
+
+use crate::utils::update_checker::{check_for_update_async, UpdateNotice};
+
 trait MenuUiExt {
     fn close_menu(&mut self);
 }
@@ -12,6 +16,9 @@ pub struct MenuBarState {
     pub show_source_control: bool,
     pub show_repo_picker: bool,
     pub show_about: bool,
+    logo_texture: Option<egui::TextureHandle>,
+    update_rx: Option<Receiver<UpdateNotice>>,
+    update_notice: Option<UpdateNotice>,
 }
 
 impl MenuBarState {
@@ -20,9 +27,32 @@ impl MenuBarState {
             show_source_control: false,
             show_repo_picker: false,
             show_about: false,
+            logo_texture: None,
+            update_rx: None,
+            update_notice: None,
         }
     }
     pub fn show(&mut self, ui: &mut egui::Ui) {
+        if let Some(rx) = &self.update_rx {
+            if let Ok(notice) = rx.try_recv() {
+                self.update_notice = Some(notice);
+                self.update_rx = None;
+            }
+        }
+
+        if self.logo_texture.is_none() {
+            let image = image::load_from_memory(include_bytes!("../../assets/logo128.png"))
+                .expect("failed to load About logo")
+                .into_rgba8();
+            let size = [image.width() as usize, image.height() as usize];
+            let color_image = egui::ColorImage::from_rgba_unmultiplied(size, image.as_raw());
+            self.logo_texture = Some(ui.ctx().load_texture(
+                "actinium-about-logo",
+                color_image,
+                egui::TextureOptions::LINEAR,
+            ));
+        }
+
         egui::Panel::top("menu_bar").show(ui, |ui| {
             egui::MenuBar::new().ui(ui, |ui| {
                 ui.menu_button("File", |ui| {
@@ -120,14 +150,48 @@ impl MenuBarState {
         });
 
         if self.show_about {
+            let logo_texture = self
+                .logo_texture
+                .as_ref()
+                .expect("About logo texture was not initialized")
+                .clone();
             egui::Window::new("About Actinium")
                 .collapsible(false)
                 .resizable(false)
                 .show(ui.ctx(), |ui| {
-                    ui.label("Actinium Game Engine");
-                    ui.label(format!("Version {}", env!("CARGO_PKG_VERSION")));
-                    ui.horizontal(|ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.image((logo_texture.id(), egui::vec2(128.0, 128.0)));
+                        ui.heading("Actinium Game Engine");
+                        ui.label(format!("Version {}", env!("CARGO_PKG_VERSION")));
+                        ui.label(format!(
+                            "Build channel: {}",
+                            crate::utils::update_checker::build_channel()
+                        ));
                         ui.label("Developed with love by Syrup Studios.");
+                        if crate::utils::update_checker::build_channel() == "stable" {
+                            if ui.button("Check for Updates").clicked() {
+                                self.update_notice = None;
+                                self.update_rx =
+                                    Some(check_for_update_async(env!("CARGO_PKG_VERSION")));
+                            }
+
+                            if let Some(notice) = &self.update_notice {
+                                match notice {
+                                    UpdateNotice::None => {
+                                        ui.label("You are up to date.");
+                                    }
+                                    UpdateNotice::Available { version, url } => {
+                                        ui.label(format!("Update available: {version}"));
+                                        if ui.link("View release").clicked() {
+                                            let _ = open::that(url);
+                                        }
+                                    }
+                                    UpdateNotice::CheckFailed(error) => {
+                                        ui.label(format!("Update check failed: {error}"));
+                                    }
+                                }
+                            }
+                        }
                     });
                     ui.separator();
                     if ui.button("Close").clicked() {

@@ -3,26 +3,12 @@ use std::thread;
 
 use serde::Deserialize;
 
-fn build_channel() -> String {
-    let Ok(exe_path) = std::env::current_exe() else {
-        return "stable".to_string();
-    };
-    let Some(dir) = exe_path.parent() else {
-        return "stable".to_string();
-    };
-
-    let candidates = [
-        dir.join(".actinium-build-channel"),
-        dir.join("../share/actinium/.actinium-build-channel"),
-    ];
-
-    for path in candidates {
-        if let Ok(contents) = std::fs::read_to_string(&path) {
-            return contents.trim().to_string();
-        }
+pub fn build_channel() -> String {
+    if cfg!(debug_assertions) {
+        "git".to_string()
+    } else {
+        "stable".to_string()
     }
-
-    "stable".to_string()
 }
 
 pub enum UpdateNotice {
